@@ -30,11 +30,16 @@ namespace Pluralsight.ProtectedDataExample
     {
         static void Main(string[] args)
         {
-             var encrypted = Protected.Protect("Mary had a little lamb", "8wef5juy2389f4", DataProtectionScope.CurrentUser);
-             Console.WriteLine(encrypted);
+            NewMethod();
+        }
 
-             var decrypted = Protected.Unprotect(encrypted, "8wef5juy2389f4", DataProtectionScope.CurrentUser);
-             Console.WriteLine(decrypted);
+        private static void NewMethod()
+        {
+            var encrypted = Protected.Protect("Mary had a little lamb", "8wef5juy2389f4", DataProtectionScope.CurrentUser);
+            Console.WriteLine(encrypted);
+
+            var decrypted = Protected.Unprotect(encrypted, "8wef5juy2389f4", DataProtectionScope.CurrentUser);
+            Console.WriteLine(decrypted);
         }
     }
 }
