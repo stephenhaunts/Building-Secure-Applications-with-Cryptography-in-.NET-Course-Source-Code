@@ -24,7 +24,7 @@ SOFTWARE.
 using System;
 using System.Text;
 
-namespace Pluralsight.RSA
+namespace Pluralsight.Asymetric
 {
     static class Program
     {

@@ -23,7 +23,7 @@ SOFTWARE.
 */
 using System.Security.Cryptography;
 
-namespace Pluralsight.RSA
+namespace Pluralsight.Asymetric
 {
     public class RsaWithCspKey
     {

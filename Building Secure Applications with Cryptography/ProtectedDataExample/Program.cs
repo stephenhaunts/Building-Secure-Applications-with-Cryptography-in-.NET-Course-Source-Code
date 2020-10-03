@@ -43,7 +43,6 @@ namespace Pluralsight.ProtectedDataExample
             string original = "Text to encrypt";
             Console.WriteLine("Original Text = ", original);
 
-
             // Create a key and nonce. Encrypt our text with AES/
             var gcmKey = aesGCM.GenerateRandomNumber(32);
             var nonce = aesGCM.GenerateRandomNumber(12);
