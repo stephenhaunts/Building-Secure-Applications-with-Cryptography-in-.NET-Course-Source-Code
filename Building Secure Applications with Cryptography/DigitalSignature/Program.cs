@@ -31,6 +31,17 @@ namespace Pluralsight.DigitalSignature
     {
         static void Main()
         {
+            SignAndVerifyData();
+
+            SignAndVerifyData2();
+
+            SignAndVerifyDataWithKeyExport();
+
+            Console.ReadLine();
+        }
+
+        private static void SignAndVerifyData()
+        {
             var document = Encoding.UTF8.GetBytes("Document to Sign");
             byte[] hashedDocument;
 
@@ -59,8 +70,55 @@ namespace Pluralsight.DigitalSignature
             Console.WriteLine(verified
                 ? "The digital signature has been correctly verified."
                 : "The digital signature has NOT been correctly verified.");
+        }
 
-            Console.ReadLine();
+        private static void SignAndVerifyData2()
+        {
+            var document = Encoding.UTF8.GetBytes("Document to Sign");
+
+            var digitalSignature = new NewDigitalSignature();
+
+            var signature = digitalSignature.SignData(document);
+
+            var valid = digitalSignature.VerifySignature(signature.Item1, signature.Item2);
+
+            if (valid)
+            {
+                Console.WriteLine("The digital signature is VALID");
+            }
+            else
+            {
+                Console.WriteLine("The digital signature is INVALID");
+            }
+        }
+
+        private static void SignAndVerifyDataWithKeyExport()
+        {
+            // Create some RSA keys and export them.
+            var digitalSignature = new NewDigitalSignature();
+            byte[] encryptedPrivateKey = digitalSignature.ExportPrivateKey(100000, "iwf57yn783425y");
+            byte[] publicKey = digitalSignature.ExportPublicKey();
+
+
+            var document = Encoding.UTF8.GetBytes("Document to Sign");
+
+            // Import our existing keys
+            var digitalSignature2 = new NewDigitalSignature();
+            digitalSignature2.ImportPublicKey(publicKey);
+            digitalSignature2.ImportEncryptedPrivateKey(encryptedPrivateKey, "iwf57yn783425y");
+
+            var signature = digitalSignature2.SignData(document);
+
+            var valid = digitalSignature2.VerifySignature(signature.Item1, signature.Item2);
+
+            if (valid)
+            {
+                Console.WriteLine("The digital signature is VALID");
+            }
+            else
+            {
+                Console.WriteLine("The digital signature is INVALID");
+            }
         }
     }
 }
