@@ -47,8 +47,8 @@ namespace Pluralsight.HybridWithIntegrityAndSignatureGCM
 
             var temp = Combine(encryptedPacket.EncryptedData, encryptedPacket.Iv);
             (byte[] signature, byte[] hash) signature = digitalSignature.SignData(Combine(temp, encryptedPacket.Tag));
-            encryptedPacket.Signature = signature.hash;
-            encryptedPacket.Hmac = signature.signature;
+            encryptedPacket.Signature = signature.signature;
+            encryptedPacket.SignatureHash = signature.hash;
 
             return encryptedPacket;
         }
@@ -59,7 +59,7 @@ namespace Pluralsight.HybridWithIntegrityAndSignatureGCM
             var decryptedSessionKey = rsaParams.Decrypt(encryptedPacket.EncryptedSessionKey);
 
 
-            if (!digitalSignature.VerifySignature(encryptedPacket.Hmac,
+            if (!digitalSignature.VerifySignature(encryptedPacket.SignatureHash,
                                       encryptedPacket.Signature))
             {
                 throw new CryptographicException(
