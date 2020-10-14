@@ -13,17 +13,17 @@ namespace Pluralsight.HybridWithIntegrityAndSignatureGCM
             rsa = RSA.Create(2048);
         }
 
-        public static byte[] ComputeHashSha256(byte[] toBeHashed)
+        public static byte[] ComputeHMACSha256(byte[] toBeHashed, byte[] hmacKey)
         {
-            using (var sha256 = SHA256.Create())
+            using (var hmacSha256 = new HMACSHA256(hmacKey))
             {
-                return sha256.ComputeHash(toBeHashed);
+                return hmacSha256.ComputeHash(toBeHashed);
             }
         }
 
-        public (byte[], byte[]) SignData(byte[] dataToSign)
+        public (byte[], byte[]) SignData(byte[] dataToSign, byte[] hmacKey)
         {
-            byte[] hashOfDataToSign = ComputeHashSha256(dataToSign);
+            byte[] hashOfDataToSign = ComputeHMACSha256(dataToSign, hmacKey);
 
             return (rsa.SignHash(hashOfDataToSign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1), hashOfDataToSign);
         }

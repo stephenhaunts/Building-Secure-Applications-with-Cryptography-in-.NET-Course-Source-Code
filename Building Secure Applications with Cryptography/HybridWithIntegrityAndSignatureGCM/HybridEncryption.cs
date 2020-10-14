@@ -45,10 +45,9 @@ namespace Pluralsight.HybridWithIntegrityAndSignatureGCM
             encryptedPacket.Tag = encrypted.tag;
             encryptedPacket.EncryptedSessionKey = rsaParams.Encrypt(sessionKey);
 
-            var temp = Combine(encryptedPacket.EncryptedData, encryptedPacket.Iv);
-            (byte[] signature, byte[] hash) signature = digitalSignature.SignData(Combine(temp, encryptedPacket.Tag));
+            (byte[] signature, byte[] hash) signature = digitalSignature.SignData(Combine(encryptedPacket.EncryptedData, encryptedPacket.Iv), sessionKey);
             encryptedPacket.Signature = signature.signature;
-            encryptedPacket.SignatureHash = signature.hash;
+            encryptedPacket.SignatureHMAC = signature.hash;
 
             return encryptedPacket;
         }
@@ -59,8 +58,7 @@ namespace Pluralsight.HybridWithIntegrityAndSignatureGCM
             var decryptedSessionKey = rsaParams.Decrypt(encryptedPacket.EncryptedSessionKey);
 
 
-            if (!digitalSignature.VerifySignature(encryptedPacket.SignatureHash,
-                                      encryptedPacket.Signature))
+            if (!digitalSignature.VerifySignature(encryptedPacket.Signature, encryptedPacket.SignatureHMAC))
             {
                 throw new CryptographicException(
                     "Digital Signature can not be verified.");

@@ -29,7 +29,7 @@ namespace Pluralsight.HybridWithIntegrityAndSignatureGCM
         public byte[] EncryptedData;
         public byte[] Iv;
         public byte[] Tag;
-        public byte[] SignatureHash;
+        public byte[] SignatureHMAC;
         public byte[] Signature;
     }
 }
