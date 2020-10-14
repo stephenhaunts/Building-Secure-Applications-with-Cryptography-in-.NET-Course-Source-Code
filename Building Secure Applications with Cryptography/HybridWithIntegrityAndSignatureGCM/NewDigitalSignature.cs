@@ -2,9 +2,9 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Pluralsight.DigitalSignature
+namespace Pluralsight.HybridWithIntegrityAndSignatureGCM
 {
-	class NewDigitalSignature
+	public class NewDigitalSignature
     {
         private RSA rsa; 
  

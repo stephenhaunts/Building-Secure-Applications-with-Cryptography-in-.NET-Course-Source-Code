@@ -24,14 +24,14 @@ SOFTWARE.
 using System;
 using System.Security.Cryptography;
 
-namespace Pluralsight.HybridWithIntegrityAndSignature
+namespace Pluralsight.HybridWithIntegrityAndSignatureGCM
 {
     public class HybridEncryption
     {
         private readonly AesGCMEncryption _aes = new AesGCMEncryption();
 
-        public EncryptedPacket EncryptData(byte[] original, RSAWithRSAParameterKey rsaParams,
-                                           DigitalSignature digitalSignature)
+        public EncryptedPacket EncryptData(byte[] original, NewRSA rsaParams,
+                                           NewDigitalSignature digitalSignature)
         {
             var sessionKey = _aes.GenerateRandomNumber(32);
 
@@ -41,23 +41,28 @@ namespace Pluralsight.HybridWithIntegrityAndSignature
 
             encryptedPacket.EncryptedData = encrypted.ciphereText;
             encryptedPacket.Tag = encrypted.tag;
-            encryptedPacket.EncryptedSessionKey = rsaParams.EncryptData(sessionKey);
+            encryptedPacket.EncryptedSessionKey = rsaParams.Encrypt(sessionKey);
 
-            using (var hmac = new HMACSHA256(sessionKey))
-            {
-                var temp = hmac.ComputeHash(Combine(encryptedPacket.EncryptedData, encryptedPacket.Iv));
-                encryptedPacket.Hmac = hmac.ComputeHash(Combine(temp, encryptedPacket.Tag));
-            }
+            //using (var hmac = new HMACSHA256(sessionKey))
+            //{
+            //    var temp = hmac.ComputeHash(Combine(encryptedPacket.EncryptedData, encryptedPacket.Iv));
+            //    encryptedPacket.Hmac = hmac.ComputeHash(Combine(temp, encryptedPacket.Tag));
+            //}
 
-            encryptedPacket.Signature = digitalSignature.SignData(encryptedPacket.Hmac);
+            //encryptedPacket.Signature = digitalSignature.SignData(encryptedPacket.Hmac);
+
+            var signature = digitalSignature.SignData(Combine(encryptedPacket.EncryptedData, encryptedPacket.Iv));
+            encryptedPacket.Signature = signature.Item1;
+
+            encryptedPacket.Hmac = signature.Item2;
 
             return encryptedPacket;
         }
 
-        public byte[] DecryptData(EncryptedPacket encryptedPacket, RSAWithRSAParameterKey rsaParams,
-                                  DigitalSignature digitalSignature)
+        public byte[] DecryptData(EncryptedPacket encryptedPacket, NewRSA rsaParams,
+                                  NewDigitalSignature digitalSignature)
         {
-            var decryptedSessionKey = rsaParams.DecryptData(encryptedPacket.EncryptedSessionKey);
+            var decryptedSessionKey = rsaParams.Decrypt(encryptedPacket.EncryptedSessionKey);
 
 
             if (!digitalSignature.VerifySignature(encryptedPacket.Hmac,

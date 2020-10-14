@@ -23,7 +23,7 @@ SOFTWARE.
 */
 using System.Security.Cryptography;
 
-namespace Pluralsight.HybridWithIntegrityAndSignature
+namespace Pluralsight.HybridWithIntegrityAndSignatureGCM
 {
     public class AesGCMEncryption
     {

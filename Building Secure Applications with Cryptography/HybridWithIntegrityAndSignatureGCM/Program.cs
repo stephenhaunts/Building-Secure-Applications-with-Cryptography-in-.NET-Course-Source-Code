@@ -25,7 +25,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Pluralsight.HybridWithIntegrityAndSignature
+namespace Pluralsight.HybridWithIntegrityAndSignatureGCM
 {
     static class Program
     {
@@ -35,12 +35,10 @@ namespace Pluralsight.HybridWithIntegrityAndSignature
 
             var hybrid = new HybridEncryption();
 
-            var rsaParams = new RSAWithRSAParameterKey();
-            rsaParams.AssignNewKey();
-
-            var digitalSignature = new DigitalSignature();
-            digitalSignature.AssignNewKey();
-
+            var rsaParams = new NewRSA();
+            
+            var digitalSignature = new NewDigitalSignature();
+            
             Console.WriteLine("Hybrid Encryption with Integrity Check and Digital Signature Demonstration in .NET");
             Console.WriteLine("----------------------------------------------------------------------------------");
             Console.WriteLine();

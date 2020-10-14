@@ -2,35 +2,30 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Pluralsight.DigitalSignature
+namespace Pluralsight.HybridWithIntegrityAndSignatureGCM
 {
-	class NewDigitalSignature
+	public class NewRSA
     {
         private RSA rsa; 
  
-        public NewDigitalSignature()
+        public NewRSA()
         {
             rsa = RSA.Create(2048);
         }
 
-        public static byte[] ComputeHashSha256(byte[] toBeHashed)
+        public byte[] Encrypt(string dataToEncrypt)
         {
-            using (var sha256 = SHA256.Create())
-            {
-                return sha256.ComputeHash(toBeHashed);
-            }
+            return rsa.Encrypt(Encoding.UTF8.GetBytes(dataToEncrypt), RSAEncryptionPadding.OaepSHA256);
         }
 
-        public (byte[], byte[]) SignData(byte[] dataToSign)
+        public byte[] Encrypt(byte[] dataToEncrypt)
         {
-            byte[] hashOfDataToSign = ComputeHashSha256(dataToSign);
-
-            return (rsa.SignHash(hashOfDataToSign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1), hashOfDataToSign);
+            return rsa.Encrypt(dataToEncrypt, RSAEncryptionPadding.OaepSHA256);
         }
 
-        public bool VerifySignature(byte[] signature, byte[] hashOfDataToSign)
+        public byte[] Decrypt(byte[] dataToDecrypt)
         {
-            return rsa.VerifyHash(hashOfDataToSign, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);            
+            return rsa.Decrypt(dataToDecrypt, RSAEncryptionPadding.OaepSHA256);
         }
 
         public byte[] ExportPrivateKey(int numberOfIterations, string password)
