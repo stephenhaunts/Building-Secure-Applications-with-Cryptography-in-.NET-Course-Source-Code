@@ -33,28 +33,22 @@ namespace Pluralsight.HybridWithIntegrityAndSignatureGCM
         public EncryptedPacket EncryptData(byte[] original, NewRSA rsaParams,
                                            NewDigitalSignature digitalSignature)
         {
+            // Create AES session key.
             var sessionKey = _aes.GenerateRandomNumber(32);
 
             var encryptedPacket = new EncryptedPacket { Iv = _aes.GenerateRandomNumber(12) };
 
+            // Encrypt data with AES-GCM
             (byte[] ciphereText, byte[] tag) encrypted = _aes.Encrypt(original, sessionKey, encryptedPacket.Iv, null);
 
             encryptedPacket.EncryptedData = encrypted.ciphereText;
             encryptedPacket.Tag = encrypted.tag;
             encryptedPacket.EncryptedSessionKey = rsaParams.Encrypt(sessionKey);
 
-            //using (var hmac = new HMACSHA256(sessionKey))
-            //{
-            //    var temp = hmac.ComputeHash(Combine(encryptedPacket.EncryptedData, encryptedPacket.Iv));
-            //    encryptedPacket.Hmac = hmac.ComputeHash(Combine(temp, encryptedPacket.Tag));
-            //}
-
-            //encryptedPacket.Signature = digitalSignature.SignData(encryptedPacket.Hmac);
-
-            var signature = digitalSignature.SignData(Combine(encryptedPacket.EncryptedData, encryptedPacket.Iv));
-            encryptedPacket.Signature = signature.Item1;
-
-            encryptedPacket.Hmac = signature.Item2;
+            var temp = Combine(encryptedPacket.EncryptedData, encryptedPacket.Iv);
+            (byte[] signature, byte[] hash) signature = digitalSignature.SignData(Combine(temp, encryptedPacket.Tag));
+            encryptedPacket.Signature = signature.hash;
+            encryptedPacket.Hmac = signature.signature;
 
             return encryptedPacket;
         }
